@@ -30,6 +30,37 @@ def main():
     print(f"True Positive Rate: {100 * sensitivity:.2f}%")
     print(f"True Negative Rate: {100 * specificity:.2f}%")
 
+def month_to_int(month):
+    if month == "Jan":
+        return 0
+    elif month == "Feb":
+        return 1
+    elif month == "Mar":
+        return 2
+    elif month == "Apr":
+        return 3
+    elif month == "May":
+        return 4
+    elif month == "June":
+        return 5
+    elif month == "Jul":
+        return 6
+    elif month == "Aug":
+        return 7
+    elif month == "Sep":
+        return 8
+    elif month == "Oct":
+        return 9
+    elif month == "Nov":
+        return 10
+    else:
+        return 11
+    
+def visitor_type_to_int(visitor_type):
+    if visitor_type == "Returning_Visitor":
+        return 1
+    else:
+        return 0
 
 def load_data(filename):
     """
@@ -59,8 +90,35 @@ def load_data(filename):
     labels should be the corresponding list of labels, where each label
     is 1 if Revenue is true, and 0 otherwise.
     """
-    raise NotImplementedError
+    with open(filename) as f:
+        reader = csv.reader(f)
+        next(reader)
 
+        evidence = []
+        labels = []
+        for row in reader:
+            evidence.append([
+                int(row[0]), # Administrative, an integer
+                float(row[1]), # Administrative_Duration, a floating point number
+                int(row[2]), # Informational, an integer
+                float(row[3]), # Informational_Duration, a floating point number
+                int(row[4]), # ... etc
+                float(row[5]),
+                float(row[6]),
+                float(row[7]),
+                float(row[8]),
+                float(row[9]),
+                int(month_to_int(row[10])), # Month, an index from 0 (January) to 11 (December)
+                int(row[11]),
+                int(row[12]),
+                int(row[13]),
+                int(row[14]),
+                int(visitor_type_to_int(row[15])), # VisitorType, an integer 0 (not returning) or 1 (returning)
+                int(1 if row[16] == "TRUE" else 0)
+            ])
+            
+            labels.append(1 if row[17] == "TRUE" else 0) # each label is 1 if Revenue is true, and 0 otherwise.
+    return (evidence, labels)
 
 def train_model(evidence, labels):
     """
