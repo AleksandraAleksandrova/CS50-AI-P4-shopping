@@ -31,36 +31,27 @@ def main():
     print(f"True Negative Rate: {100 * specificity:.2f}%")
 
 def month_to_int(month):
-    if month == "Jan":
-        return 0
-    elif month == "Feb":
-        return 1
-    elif month == "Mar":
-        return 2
-    elif month == "Apr":
-        return 3
-    elif month == "May":
-        return 4
-    elif month == "June":
-        return 5
-    elif month == "Jul":
-        return 6
-    elif month == "Aug":
-        return 7
-    elif month == "Sep":
-        return 8
-    elif month == "Oct":
-        return 9
-    elif month == "Nov":
-        return 10
-    else:
-        return 11
+    month_dict = {
+        "Jan": 0,
+        "Feb": 1,
+        "Mar": 2,
+        "Apr": 3,
+        "May": 4,
+        "June": 5,
+        "Jul": 6,
+        "Aug": 7,
+        "Sep": 8,
+        "Oct": 9,
+        "Nov": 10,
+        "Dec": 11,
+    }
+    return month_dict.get(month)
+
     
 def visitor_type_to_int(visitor_type):
     if visitor_type == "Returning_Visitor":
         return 1
-    else:
-        return 0
+    return 0
 
 def load_data(filename):
     """
@@ -125,7 +116,9 @@ def train_model(evidence, labels):
     Given a list of evidence lists and a list of labels, return a
     fitted k-nearest neighbor model (k=1) trained on the data.
     """
-    raise NotImplementedError
+    model = KNeighborsClassifier(n_neighbors=1)
+    model.fit(evidence, labels)
+    return model
 
 
 def evaluate(labels, predictions):
@@ -143,8 +136,26 @@ def evaluate(labels, predictions):
     representing the "true negative rate": the proportion of
     actual negative labels that were accurately identified.
     """
-    raise NotImplementedError
+    true_positives = 0
+    total_positives = 0
+    true_negatives = 0
+    total_negatives = 0
 
+    for actual, predicted in zip(labels, predictions):
+        if actual == 1 and predicted == 1:
+            true_positives += 1
+        if actual == 1:
+            total_positives += 1
+
+        if actual == 0 and predicted == 0:
+            true_negatives += 1
+        if actual == 0:
+            total_negatives += 1
+
+    sensitivity = true_positives / total_positives 
+    specificity = true_negatives / total_negatives 
+
+    return (sensitivity, specificity)
 
 if __name__ == "__main__":
     main()
